@@ -95,10 +95,26 @@ browser.webRequest.onBeforeRequest.addListener(
                 document.querySelectorAll("div[data-anc='body']>div>div>div>div>div>div, div[data-spm='platformRecommendH5']>div>div>div").forEach(elt=>elt.style.display="none")
 
                 // Remove the overlay over the products that opens the popup
-                if (document.querySelector("#card-list") || document.querySelector(".slick-track")) {
-                    for (const item of document.querySelector("#card-list").children || document.querySelector(".slick-track").children) {
+                if (document.querySelector("#card-list")) {
+                    for (const item of document.querySelector("#card-list").children) {
                         const wrapper = item.querySelector(":scope > div");
                         if (!wrapper) continue;
+
+                        const divs = wrapper.querySelectorAll(":scope > div");
+                        if (divs.length === 2) {
+                            divs[1].style.display = "none";
+                        }
+                    }
+                }
+
+                // Recommended products on the product page
+                if (document.querySelector(".slick-slide")) {
+                    for (const item of document.querySelectorAll(".slick-slide")) {
+
+                        const wrapper = item.querySelector(":scope > div > div > div");
+                        if (!wrapper) continue;
+
+						console.log(wrapper)
 
                         const divs = wrapper.querySelectorAll(":scope > div");
                         if (divs.length === 2) {

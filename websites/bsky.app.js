@@ -93,6 +93,13 @@ browser.webRequest.onBeforeRequest.addListener(
                 } else if (details.url.includes("getProfile")) {
                     // Profile view
                     jsonData = { ...jsonData, labels: [] } // Remove labels from profile view. Posts are usually labelled individually, so you are still warned about nsfw content in the feed, but the profile view doesn't need to have labels on it.
+                } else if (details.url.includes("getFeed")) {
+                    // Feed view
+                    jsonData?.feed?.forEach(feed => {
+                        feed.post = spoofBlueskyAutomod(feed.post)
+                    });
+                } else {
+                    console.warn("Unknown request URL:", details.url);
                 }
                 filter.write(encoder.encode(JSON.stringify(jsonData)));
                 filter.close()
@@ -105,7 +112,7 @@ browser.webRequest.onBeforeRequest.addListener(
         }
 
     },
-    { urls: ["*://public.api.bsky.app/xrpc/app.bsky.unspecced.getPostThreadV2?*", "*://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?*", "*://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?*"] },
+    { urls: ["*://public.api.bsky.app/xrpc/app.bsky.unspecced.getPostThreadV2?*", "*://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?*", "*://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?*", "https://api.bsky.app/xrpc/app.bsky.feed.getFeed?*"] },
     ["blocking"]
 );
 
