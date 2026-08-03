@@ -11,7 +11,7 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 
 console.log("Bluesky bypass script is running");
 
-// Sensitive posts
+// Sensitive posts (auto mod)
 browser.webRequest.onBeforeRequest.addListener(
     async function (details) {
         console.log("Request intercepted:", details.url);
@@ -35,10 +35,10 @@ browser.webRequest.onBeforeRequest.addListener(
                         view.policies.labelValueDefinitions.push({
                             adultOnly: false,
                             blurs: "media",
-                            defaultSetting: "warn",
+                            defaultSetting: "show",
                             identifier: label,
                             locales: [{
-                                description: `This content is labeled as ${label}.`,
+                                description: `This content is labeled as ${label} and was caught by age-verification bypass. If it contains media, click on "show" to view it.`,
                                 lang: "en",
                                 name: label
                             }],
@@ -48,6 +48,7 @@ browser.webRequest.onBeforeRequest.addListener(
                 })
                 filter.write(encoder.encode(JSON.stringify(jsonData)));
                 filter.close()
+                console.log("Modified JSON data:", jsonData);
             } catch (error) {
                 console.warn("Data is not valid JSON:", error);
                 filter.write(encoder.encode(response));
@@ -59,6 +60,55 @@ browser.webRequest.onBeforeRequest.addListener(
     { urls: ["*://public.api.bsky.app/xrpc/app.bsky.labeler.getServices?*"] },
     ["blocking"]
 );
+
+// Sensitive posts (self labeling)
+
+browser.webRequest.onBeforeRequest.addListener(
+    async function (details) {
+        console.log("Request intercepted:", details.url);
+
+        const filter = browser.webRequest.filterResponseData(details.requestId);
+
+        let decoder = new TextDecoder("utf-8");
+        let encoder = new TextEncoder();
+
+        let response = '';
+        filter.ondata = event => {
+            response += decoder.decode(event.data, { stream: true });
+        };
+
+        filter.onstop = async () => {
+            try {
+                let jsonData = JSON.parse(response);
+                if (details.url.includes("getPostThreadV2")) {
+                    // Single post view
+                    jsonData?.thread?.forEach(thread => {
+                        thread.value.post = spoofBlueskyAutomod(thread.value.post)
+                    });
+                } else if (details.url.includes("getAuthorFeed")) {
+                    // Author feed view
+                    jsonData?.feed?.forEach(feed => {
+                        feed.post = spoofBlueskyAutomod(feed.post)
+                    });
+                } else if (details.url.includes("getProfile")) {
+                    // Profile view
+                    jsonData = { ...jsonData, labels: [] } // Remove labels from profile view. Posts are usually labelled individually, so you are still warned about nsfw content in the feed, but the profile view doesn't need to have labels on it.
+                }
+                filter.write(encoder.encode(JSON.stringify(jsonData)));
+                filter.close()
+                console.log("Modified JSON data:", jsonData);
+            } catch (error) {
+                console.warn("Data is not valid JSON:", error);
+                filter.write(encoder.encode(response));
+                filter.close();
+            }
+        }
+
+    },
+    { urls: ["*://public.api.bsky.app/xrpc/app.bsky.unspecced.getPostThreadV2?*", "*://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?*", "*://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?*"] },
+    ["blocking"]
+);
+
 
 // Age assurance config request (the one that completely blocks the site)
 browser.webRequest.onBeforeRequest.addListener(
@@ -79,7 +129,6 @@ browser.webRequest.onBeforeRequest.addListener(
         filter.onstop = async () => {
             try {
                 let jsonData = JSON.parse(response);
-                console.log("Original JSON data:", jsonData);
                 jsonData.regions = []
                 filter.write(encoder.encode(JSON.stringify(jsonData)));
                 filter.close()
@@ -94,3 +143,13 @@ browser.webRequest.onBeforeRequest.addListener(
     { urls: ["*://public.api.bsky.app/xrpc/app.bsky.ageassurance.getConfig"] },
     ["blocking"]
 );
+
+// Usually, self labels (when people chose to make their content 18+) can't be seen by people who are not logged in. This function spoofs the label source to make it look like it's from bluesky's automod, which allows people to see it even if they are not logged in, due to how I rewrite the resopnse from the getServices labeler earlier in this file..
+function spoofBlueskyAutomod(post) {
+    if (post?.labels) {
+        post.labels.forEach(label => {
+            label.src = "did:plc:ar7c4by46qjdydhdevvrndac" // Spoof bluesky's automoderation to let people see it
+        })
+    }
+    return post
+}
