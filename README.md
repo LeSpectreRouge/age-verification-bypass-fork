@@ -14,7 +14,7 @@
 - **[AgeVerif.com](https://demo.ageverif.com/)** Basic and advanced integrations bypassed, not for the oAuth2 flow
 - **[AliExpress](https://aliexpress.com/)** for viewing items categorized as "For adults".
 - **[Bluesky](https://bsky.app)** for viewing sensitive posts without logging in. The posts are visible, and the medias are revealed by clicking on "Show" in the Sensitive Media banner. *(A side effect if this is that posts with labels from their author will appear as posts labelled by Bluesky's automoderation)*
-- **[Reddit](https://reddit.com)** for viewing NSFW communities. Log out to see them! *(It's a clunky solution, I recommend you use [redlib](https://redlib.catsarch.com/) for a fully private Reddit front-end where you can view NSFW posts!)*
+- **[Reddit](https://reddit.com)** for viewing NSFW subreddits *(can't be found with Reddit search, need a link!)* and posts. Log out to see them! *(It's a clunky solution, I recommend you use [redlib](https://redlib.catsarch.com/) for a fully private Reddit front-end where you can view NSFW posts!)*
 - **[Veriff](https://veriff.com)** (Supports only a few sites using it! Try, but don't expect it to work!)
 
 <a href="https://discord.gg/zUq5de7bTU">
