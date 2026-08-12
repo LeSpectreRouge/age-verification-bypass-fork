@@ -48,3 +48,5 @@ The extension can inject a script into the page that will remove the elements li
 ## Want to check out some more of my stuff?
 
 <a rel="me" href="https://furries.club/@helloyanis">Follow me on Mastodon</a>
+
+<meta name="fediverse:creator" content="@helloyanis@furries.club">
