@@ -43,3 +43,8 @@ This extension will, on any website (hence why the "All URLs" permission is need
 The extension can inject a script into the page that will remove the elements like popups and image blurs that are added if a page is set to NSFW. For example, AliExpress and Reddit use this
 
 **No data is ever being collected**. I (and age verification platforms) can't check if you have been on a certain website
+
+
+## Want to check out some more of my stuff?
+
+<a rel="me" href="https://furries.club/@helloyanis">Follow me on Mastodon</a>
