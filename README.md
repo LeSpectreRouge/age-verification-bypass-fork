@@ -9,6 +9,8 @@
 
 # Supported services
 
+**[Read the wiki](https://github.com/helloyanis/age-verification-bypass/wiki/Usage)** for more details!
+
 - **[AgeChecker.net](https://agechecker.net/demo)** Fully bypassed, unless the site's server does a double check with the AgeChecker server
 - **[AgeGO](https://agego.com)** Basic integration bypassed, advanced integration partially bypassed, server to server mode (when you don't get a popup but are redirected to an AgeGO page) bypassed but the server usually does additional checks so it is unlikely to work.
 - **[AgeVerif.com](https://demo.ageverif.com/)** Basic and advanced integrations bypassed, not for the oAuth2 flow

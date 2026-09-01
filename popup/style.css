@@ -1,0 +1,22 @@
+html{
+    font-family: system-ui;
+    color-scheme: light dark;
+}
+
+.surface {
+    background-color: buttonface;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+}
+
+.surface > :first-child {
+    margin-top: 0;
+}
+.surface > :last-child {
+    margin-bottom: 0;
+}
+
+.surface.important {
+    border: 1px solid AccentColor;
+}
